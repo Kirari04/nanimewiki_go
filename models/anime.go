@@ -1,6 +1,6 @@
 package models
 
 type Anime struct {
-	ID    uint   `json:"id" gorm:"primary_key" binding:"required"`
-	Title string `json:"title" binding:"required"`
+	ID    uint   `json:"id" gorm:"primary_key;autoIncrement;not null;unique"`
+	Title string `json:"title"`
 }

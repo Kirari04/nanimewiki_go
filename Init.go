@@ -4,6 +4,7 @@ import (
 	"ch/kirari/animeApi/controllers"
 	"ch/kirari/animeApi/models"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -18,6 +19,11 @@ func main() {
 	}
 
 	models.ConnectDatabase(os.Getenv("database"))
+	var doSeed, _ = strconv.ParseBool(os.Getenv("database_seed"))
+	if doSeed {
+		models.SeedDatabase()
+	}
+
 	gin.SetMode(os.Getenv("gin_mode"))
 	router := gin.Default()
 	router.SetTrustedProxies([]string{os.Getenv("trusted_proxie")})
