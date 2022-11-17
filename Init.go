@@ -3,22 +3,32 @@ package main
 import (
 	"ch/kirari/animeApi/controllers"
 	"ch/kirari/animeApi/models"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"net/http"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+
+	models.ConnectDatabase(os.Getenv("database"))
+	gin.SetMode(os.Getenv("gin_mode"))
 	router := gin.Default()
-
-	models.ConnectDatabase()
-
+	router.SetTrustedProxies([]string{os.Getenv("trusted_proxie")})
 	api := router.Group("/api")
 	{
 		v1 := api.Group("/v1")
 		{
-			v1.GET("/ping", controllers.Default)
+			anime := v1.Group("/anime")
+			{
+				anime.GET("/list", controllers.Default)
+			}
 		}
 	}
 
@@ -27,5 +37,5 @@ func main() {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Not found"})
 	})
 
-	router.Run()
+	router.Run(os.Getenv("host") + ":" + os.Getenv("port"))
 }

@@ -8,7 +8,6 @@ import (
 	"net/http"
 )
 
-// Default controller handles returning the hello world JSON response
 func Default(c *gin.Context) {
 	var animes []models.Anime
 	models.DB.Find(&animes)
