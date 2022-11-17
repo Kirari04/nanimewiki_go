@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"ch/kirari/animeApi/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"net/http"
 )
 
 func Default(c *gin.Context) {
