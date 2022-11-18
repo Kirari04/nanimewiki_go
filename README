@@ -40,7 +40,7 @@ GET /api/{version}/anime/list/{!index}
 http://localhost:8080/api/v1/anime/list
 http://localhost:8080/api/v1/anime/list/0
 ```
-
+#### Response
 ```js
 // GOOD RESPONSE
 {
