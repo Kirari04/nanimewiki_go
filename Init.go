@@ -33,14 +33,20 @@ func main() {
 		{
 			anime := v1.Group("/anime")
 			{
-				anime.GET("/list", controllers.Default)
+				anime.GET("/list", controllers.ListAnime)
+				anime.GET("/list/:index", controllers.ListAnime)
 			}
 		}
 	}
 
 	// Handle error response when a route is not defined
 	router.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Not found"})
+		c.JSON(http.StatusNotFound, gin.H{
+			"success": 0,
+			"error":   "Not Found",
+			"data":    nil,
+			"len":     nil,
+		})
 	})
 
 	router.Run(os.Getenv("host") + ":" + os.Getenv("port"))
