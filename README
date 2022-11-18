@@ -1,0 +1,68 @@
+## Variables & Syntax
+ - `!` means the variable and the leading slash can be left out 
+ - `{}` contains possible value
+
+<table border="2">
+    <thead>
+        <tr>
+            <td>Variable Name</td>
+            <td>Possible Value</td>
+            <td>Datatype or Regex</td>
+            <td>Default Value</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <code>version</code>
+            </td>
+            <td>{ v1 }</td>
+            <td> - </td>
+            <td> - </td>
+        </tr>
+        <tr>
+            <td>
+                <code>index</code>
+            </td>
+            <td>{ 0, 1, 2, 3, ... }</td>
+            <td> uint </td>
+            <td> 0 </td>
+        </tr>
+    </tbody>
+</table>
+
+## Animes
+### List all Animes
+#### Syntax
+```
+GET /api/{version}/anime/list/{!index}
+
+http://localhost:8080/api/v1/anime/list
+http://localhost:8080/api/v1/anime/list/0
+```
+
+```js
+// GOOD RESPONSE
+{
+    "data": [...],
+    "error": null,
+    "len": 99,
+    "success": 1
+}
+```
+- <code>data</code> | lists 100 elements
+- <code>len</code> | the amount of data the server has
+- <code>error</code> | error description if sth failes
+- <code>success</code> | if is success
+
+```js
+// BAD RESPONSE
+{
+    "data": null,
+    "error": "Bad Request",
+    "len": null,
+    "success": 0
+}
+```
+- <code>error</code> | error description if sth failes
+- <code>success</code> | if is success 1 else 0
