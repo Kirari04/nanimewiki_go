@@ -29,7 +29,13 @@ func ConnectDatabase(databaseFile string) {
 		panic("Failed to connect to database!")
 	}
 
+	// migrate Animes
 	err = database.AutoMigrate(&Anime{})
+	if err != nil {
+		return
+	}
+	// migrate Users
+	err = database.AutoMigrate(&User{})
 	if err != nil {
 		return
 	}
