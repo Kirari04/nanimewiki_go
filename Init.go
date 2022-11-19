@@ -25,8 +25,14 @@ func main() {
 	}
 
 	gin.SetMode(os.Getenv("gin_mode"))
-	router := gin.Default()
+	router := gin.New()
+	if os.Getenv("gin_mode") == "debug" {
+		router.Use(gin.Logger())
+	}
+	router.Use(gin.Recovery())
 	router.SetTrustedProxies([]string{os.Getenv("trusted_proxie")})
+
+	// ROUTES
 	api := router.Group("/api")
 	{
 		v1 := api.Group("/v1")
@@ -44,11 +50,19 @@ func main() {
 		}
 	}
 
-	// Handle error response when a route is not defined
+	// ERROR ROUTES
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"success": 0,
 			"error":   "Not Found",
+			"data":    nil,
+			"len":     nil,
+		})
+	})
+	router.NoMethod(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"success": 0,
+			"error":   "Method not allowed",
 			"data":    nil,
 			"len":     nil,
 		})
