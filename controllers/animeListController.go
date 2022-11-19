@@ -9,13 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MapRequest struct {
+type MapRequest_ListAnime struct {
 	Index uint `uri:"index"`
 }
 
 func ListAnime(c *gin.Context) {
 	// VALIDATOR
-	var req MapRequest
+	var req MapRequest_ListAnime
 	if c.ShouldBindUri(&req) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": 0,
