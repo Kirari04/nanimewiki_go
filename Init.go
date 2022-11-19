@@ -45,7 +45,7 @@ func main() {
 
 			user := v1.Group("/user")
 			{
-				user.GET("/register", controllers.UserRegister)
+				user.POST("/register", controllers.UserRegister)
 			}
 		}
 	}
