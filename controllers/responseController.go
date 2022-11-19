@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InternalServerError_response(c *gin.Context, err error) {
+func InternalServerError_response(c *gin.Context) {
 	c.JSON(http.StatusInternalServerError, gin.H{
 		"success": 0,
 		"error":   "Database Error",
