@@ -36,6 +36,11 @@ func main() {
 				anime.GET("/list", controllers.ListAnime)
 				anime.GET("/list/:index", controllers.ListAnime)
 			}
+
+			user := v1.Group("/user")
+			{
+				user.GET("/register", controllers.UserRegister)
+			}
 		}
 	}
 
