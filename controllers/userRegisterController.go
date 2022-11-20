@@ -2,7 +2,10 @@ package controllers
 
 import (
 	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/templates"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -72,8 +75,8 @@ func UserRegister(c *gin.Context) {
 		})
 		return
 	}
-	// validation finished
 
+	// hash password
 	passwordHash, err := HashPassword(req.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -85,6 +88,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
+	// add user
 	res_user := models.DB.Create(&models.User{
 		Username: req.Username,
 		Email:    req.Email,
@@ -95,10 +99,42 @@ func UserRegister(c *gin.Context) {
 		InternalServerError_response(c)
 		return
 	}
-	header := ""
-	message := ""
+
+	// load email template
+	emailTemplate, err := templates.Get(templates.Data.EmailRegister, "de")
+	if err != nil {
+		InternalServerError_response(c)
+		return
+	}
+
+	// template params
+	vars := []models.TemplateVars{
+		{
+			Variable: "username",
+			Value:    req.Username,
+		},
+		{
+			Variable: "service_name",
+			Value:    os.Getenv("service_name"),
+		},
+		{
+			Variable: "service_domain",
+			Value:    os.Getenv("service_domain"),
+		},
+		{
+			Variable: "code",
+			Value:    "187Test",
+		},
+	}
+
+	// build email
+	header := templates.Prepare(emailTemplate["head"], vars)
+	message := templates.Prepare(emailTemplate["body"], vars)
+
+	// send email
 	id, err_mail := SendMessage(c, header, message, req.Email)
 	if err_mail != nil || id == "" {
+		fmt.Printf("Error message: %v / Email id %v\n", err_mail.Error(), id)
 		c.JSON(http.StatusOK, gin.H{
 			"success": 0,
 			"error":   "Couldn't send verification e-mail. Please contact support.",
