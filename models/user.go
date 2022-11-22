@@ -14,6 +14,7 @@ type User struct {
 type EmailVerificationKey struct {
 	DBModel
 	UserID uint   `gorm:""`
+	User   User   `gorm:""`
 	Key    string `gorm:""`
 	Expire time.Time
 }
