@@ -2,7 +2,7 @@
  - `!` means the variable and the leading slash can be left out 
  - `{}` contains possible value
 
-|Variable Name|Possible Value|Datatype or Regex|Default Value|   |
+|Variable Name|Possible Value|Datatype or Regex|Default Value|
 |---        |---                |:-----:|:-----:|
 |**version**|{ v1 }             |-      |-      |
 |**index**  |{ 0, 1, 2, 3, ... }|uint   |0      |
