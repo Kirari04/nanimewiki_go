@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"ch/kirari/animeApi/helpers"
 	"ch/kirari/animeApi/models"
 	"ch/kirari/animeApi/setups"
 	"ch/kirari/animeApi/templates"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -83,6 +85,25 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
+	var userData models.User
+	if err := setups.DB.Where(&models.User{Username: req.Username}).First(&userData).Error; err != nil {
+		log.Println(err)
+		InternalServerError_response(c)
+		return
+	}
+	verificationCode := helpers.RandIntBytesRmndr(8)
+	if err := setups.DB.Create(&models.EmailVerificationCode{
+		UserID: userData.ID,
+		Code:   verificationCode,
+		Expire: time.Now().Add(time.Minute * 15),
+	}).Error; err != nil {
+		log.Println(err)
+		InternalServerError_response(c)
+		return
+	}
+
+	log.Printf("\nverificationCode: %v\n", verificationCode)
+
 	// template params
 	vars := []models.TemplateVars{
 		{
@@ -99,16 +120,21 @@ func UserRegister(c *gin.Context) {
 		},
 		{
 			Variable: "code",
-			Value:    "187Test",
+			Value:    verificationCode,
+		},
+		{
+			Variable: "expires",
+			Value:    "in 15 minutes",
 		},
 	}
 
 	// build email
 	header := templates.Prepare(emailTemplate["head"], vars)
-	message := templates.Prepare(emailTemplate["body"], vars)
+	messageHtml := templates.Prepare(emailTemplate["body"], vars)
+	messageTxt := templates.Prepare(emailTemplate["txt"], vars)
 
 	// send email
-	id, err_mail := SendMessage(c, header, message, req.Email)
+	id, err_mail := SendMessage(c, header, messageTxt, messageHtml, req.Email)
 	if err_mail != nil || id == "" {
 		log.Printf("Error message: %v / Email id %v\n", err_mail.Error(), id)
 		CustomError_response(c, http.StatusInternalServerError, "Couldn't send verification e-mail. Please contact support.")
