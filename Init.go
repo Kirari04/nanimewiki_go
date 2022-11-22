@@ -2,7 +2,7 @@ package main
 
 import (
 	"ch/kirari/animeApi/controllers"
-	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/setups"
 	"os"
 	"strconv"
 
@@ -18,10 +18,10 @@ func main() {
 		panic("Error loading .env file")
 	}
 
-	models.ConnectDatabase(os.Getenv("database"))
+	setups.ConnectDatabase(os.Getenv("database"))
 	var doSeed, _ = strconv.ParseBool(os.Getenv("database_seed"))
 	if doSeed {
-		models.SeedDatabase()
+		setups.SeedDatabase()
 	}
 
 	gin.SetMode(os.Getenv("gin_mode"))

@@ -1,6 +1,7 @@
-package models
+package setups
 
 import (
+	"ch/kirari/animeApi/models"
 	"fmt"
 	"io/ioutil"
 	"strconv"
@@ -18,9 +19,9 @@ import (
 var DB *gorm.DB
 
 type offline_database struct {
-	Repository string  `json:"repository"`
-	LastUpdate string  `json:"lastUpdate"`
-	Data       []Anime `json:"data"`
+	Repository string         `json:"repository"`
+	LastUpdate string         `json:"lastUpdate"`
+	Data       []models.Anime `json:"data"`
 }
 
 func ConnectDatabase(databaseFile string) {
@@ -30,12 +31,17 @@ func ConnectDatabase(databaseFile string) {
 	}
 
 	// migrate Animes
-	err = database.AutoMigrate(&Anime{})
+	err = database.AutoMigrate(&models.Anime{})
 	if err != nil {
 		return
 	}
 	// migrate Users
-	err = database.AutoMigrate(&User{})
+	err = database.AutoMigrate(&models.User{})
+	if err != nil {
+		return
+	}
+	// migrate EmailVerificationKey
+	err = database.AutoMigrate(&models.EmailVerificationKey{})
 	if err != nil {
 		return
 	}
@@ -84,7 +90,7 @@ func SeedDatabase() {
 	seedStart := time.Now()
 	var deleteCurrent, _ = strconv.ParseBool(os.Getenv("database_seed_overwrite"))
 	if deleteCurrent == true {
-		DB.Where("1 = 1").Delete(&Anime{})
+		DB.Where("1 = 1").Delete(&models.Anime{})
 	}
 
 	for i := 0; i < len(off_db_val.Data); i++ {

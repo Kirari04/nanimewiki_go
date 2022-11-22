@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/setups"
 	"ch/kirari/animeApi/templates"
 	"fmt"
 	"net/http"
@@ -44,7 +45,7 @@ func UserRegister(c *gin.Context) {
 
 	//check username exists
 	var countUsername int64
-	res_username := models.DB.Where(&models.User{Username: req.Username}).Model(&models.User{}).Count(&countUsername)
+	res_username := setups.DB.Where(&models.User{Username: req.Username}).Model(&models.User{}).Count(&countUsername)
 	if res_username.Error != nil {
 		InternalServerError_response(c)
 		return
@@ -61,7 +62,7 @@ func UserRegister(c *gin.Context) {
 
 	//check email exists
 	var countEmail int64
-	res_email := models.DB.Where(&models.User{Email: req.Email}).Model(&models.User{}).Count(&countEmail)
+	res_email := setups.DB.Where(&models.User{Email: req.Email}).Model(&models.User{}).Count(&countEmail)
 	if res_email.Error != nil {
 		InternalServerError_response(c)
 		return
@@ -89,7 +90,7 @@ func UserRegister(c *gin.Context) {
 	}
 
 	// add user
-	res_user := models.DB.Create(&models.User{
+	res_user := setups.DB.Create(&models.User{
 		Username: req.Username,
 		Email:    req.Email,
 		Password: passwordHash,

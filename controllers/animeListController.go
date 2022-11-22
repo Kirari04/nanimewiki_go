@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/setups"
 	"net/http"
 	"os"
 	"strconv"
@@ -31,9 +32,9 @@ func ListAnime(c *gin.Context) {
 	offset := int(req.Index) * limit
 
 	var animes []models.Anime
-	models.DB.Limit(limit).Offset(offset).Find(&animes)
+	setups.DB.Limit(limit).Offset(offset).Find(&animes)
 	var itemLen int64
-	models.DB.Model(&models.Anime{}).Count(&itemLen)
+	setups.DB.Model(&models.Anime{}).Count(&itemLen)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": 1,
