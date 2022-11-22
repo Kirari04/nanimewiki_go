@@ -1,0 +1,12 @@
+Wellcome {{username}} to {{service_name}},
+to activate your accound please enter the below shown code into the website.
+
+Code: {{code}}
+This code expires in {{expires}}
+
+Make sure to not share this code with anyone!
+Make sure to enter this code only on {{service_domain}}
+
+
+Best Regards
+The {{service_name}} Team
