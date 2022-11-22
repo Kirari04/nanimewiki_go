@@ -21,24 +21,14 @@ type MapRequest_UserRegister struct {
 func UserRegister(c *gin.Context) {
 	var req MapRequest_UserRegister
 	if c.ShouldBind(&req) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": 0,
-			"error":   "Bad Request",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 	validate := validator.New()
 	err := validate.Struct(req)
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"success": 0,
-				"error":   "The field " + err.Field() + " is invalid.",
-				"data":    nil,
-				"len":     nil,
-			})
+			CustomError_response(c, http.StatusBadRequest, "The field "+err.Field()+" is invalid.")
 			return
 		}
 	}
@@ -51,12 +41,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	if countUsername > 0 {
-		c.JSON(http.StatusConflict, gin.H{
-			"success": 0,
-			"error":   "This Username is already taken.",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusConflict, "This Username is already taken.")
 		return
 	}
 
@@ -68,24 +53,14 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	if countEmail > 0 {
-		c.JSON(http.StatusConflict, gin.H{
-			"success": 0,
-			"error":   "This Email is already taken.",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusConflict, "This Email is already taken.")
 		return
 	}
 
 	// hash password
 	passwordHash, err := HashPassword(req.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": 0,
-			"error":   "The server can't process this password. Please choose another one.",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusBadRequest, "The server can't process this password. Please choose another one.")
 		return
 	}
 
@@ -136,19 +111,9 @@ func UserRegister(c *gin.Context) {
 	id, err_mail := SendMessage(c, header, message, req.Email)
 	if err_mail != nil || id == "" {
 		log.Printf("Error message: %v / Email id %v\n", err_mail.Error(), id)
-		c.JSON(http.StatusOK, gin.H{
-			"success": 0,
-			"error":   "Couldn't send verification e-mail. Please contact support.",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusInternalServerError, "Couldn't send verification e-mail. Please contact support.")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": 1,
-		"error":   nil,
-		"data":    nil,
-		"len":     nil,
-	})
+	OK_response(c, nil, nil)
 }

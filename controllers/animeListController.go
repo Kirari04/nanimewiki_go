@@ -18,12 +18,7 @@ func ListAnime(c *gin.Context) {
 	// VALIDATOR
 	var req MapRequest_ListAnime
 	if c.ShouldBindUri(&req) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": 0,
-			"error":   "Bad Request",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 
@@ -36,10 +31,5 @@ func ListAnime(c *gin.Context) {
 	var itemLen int64
 	setups.DB.Model(&models.Anime{}).Count(&itemLen)
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": 1,
-		"error":   "",
-		"data":    animes,
-		"len":     itemLen,
-	})
+	OK_response(c, animes, itemLen)
 }
