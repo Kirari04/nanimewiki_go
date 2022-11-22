@@ -11,10 +11,10 @@ type User struct {
 	Avatar        string `gorm:""`
 }
 
-type EmailVerificationKey struct {
+type EmailVerificationCode struct {
 	DBModel
-	UserID uint   `gorm:""`
-	User   User   `gorm:""`
-	Key    string `gorm:""`
-	Expire time.Time
+	UserID uint      `gorm:"not null"`
+	User   User      `gorm:""`
+	Code   string    `gorm:""`
+	Expire time.Time `gorm:"not null"`
 }
