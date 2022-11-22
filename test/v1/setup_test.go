@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -16,16 +15,6 @@ import (
 )
 
 var host string
-
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-func RandStringBytesRmndr(n int) string {
-	b := make([]byte, n)
-	for i := range b {
-		b[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
-	}
-	return string(b)
-}
 
 type ExpectedResponse struct {
 	Data    []models.Anime `json:"data"`
@@ -142,6 +131,27 @@ func getTmpEmails(t *testing.T, route string, expectedStatusCode int, mapper *[]
 }
 
 func getTmpMessages(t *testing.T, route string, expectedStatusCode int, mapper *[]tmpEmailListResponse) {
+	res, err := http.Get(route)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != expectedStatusCode {
+		t.Fatalf("Status Code %v - %v", res.StatusCode, res.Body)
+	}
+
+	defer res.Body.Close()
+	byteValue, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = json.Unmarshal(byteValue, &mapper)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func getTmpMessage(t *testing.T, route string, expectedStatusCode int, mapper *tmpEmailResponse) {
 	res, err := http.Get(route)
 	if err != nil {
 		t.Fatal(err)
