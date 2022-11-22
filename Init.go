@@ -3,6 +3,7 @@ package main
 import (
 	"ch/kirari/animeApi/controllers"
 	"ch/kirari/animeApi/setups"
+	"log"
 	"os"
 	"strconv"
 
@@ -15,11 +16,14 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		panic("Error loading .env file")
+		log.Panic("Error loading .env file")
 	}
 
 	setups.ConnectDatabase(os.Getenv("database"))
-	var doSeed, _ = strconv.ParseBool(os.Getenv("database_seed"))
+	doSeed, err := strconv.ParseBool(os.Getenv("database_seed"))
+	if err != nil {
+		log.Panic("Failed to parse database_seed")
+	}
 	if doSeed {
 		setups.SeedDatabase()
 	}

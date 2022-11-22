@@ -4,7 +4,7 @@ import (
 	"ch/kirari/animeApi/models"
 	"ch/kirari/animeApi/setups"
 	"ch/kirari/animeApi/templates"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -135,7 +135,7 @@ func UserRegister(c *gin.Context) {
 	// send email
 	id, err_mail := SendMessage(c, header, message, req.Email)
 	if err_mail != nil || id == "" {
-		fmt.Printf("Error message: %v / Email id %v\n", err_mail.Error(), id)
+		log.Printf("Error message: %v / Email id %v\n", err_mail.Error(), id)
 		c.JSON(http.StatusOK, gin.H{
 			"success": 0,
 			"error":   "Couldn't send verification e-mail. Please contact support.",

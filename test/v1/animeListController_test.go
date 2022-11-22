@@ -3,8 +3,8 @@ package controllers__test
 import (
 	"ch/kirari/animeApi/models"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -26,11 +26,11 @@ type ExpectedResponse struct {
 func TestMain(m *testing.M) {
 	err := godotenv.Load("../../.env")
 	if err != nil {
-		fmt.Printf("m: %v\n", err)
+		log.Printf("m: %v\n", err)
 		return
 	}
 	host = os.Getenv("test_host")
-	fmt.Printf("Host: %v\n", host)
+	log.Printf("Host: %v\n", host)
 	code := m.Run()
 	os.Exit(code)
 }
