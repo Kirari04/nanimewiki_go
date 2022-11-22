@@ -40,6 +40,13 @@ func TestMain(m *testing.M) {
 func TestAnimeListCorrect(t *testing.T) {
 	res := getReq(t, "/api/v1/anime/list/0", 200)
 	AssertEqualInt(t, res.Success, 1)
+	AssertEqualBool(t, (res.Len > 0), true)
+}
+
+func TestAnimeListNoParameter(t *testing.T) {
+	res := getReq(t, "/api/v1/anime/list", 200)
+	AssertEqualInt(t, res.Success, 1)
+	AssertEqualBool(t, (res.Len > 0), true)
 }
 
 func TestAnimeListNegativIndex(t *testing.T) {
@@ -48,10 +55,6 @@ func TestAnimeListNegativIndex(t *testing.T) {
 
 func TestAnimeListIncorrectParameterValue(t *testing.T) {
 	getReq(t, "/api/v1/anime/list/onlyIntegerHere", 400)
-}
-
-func TestAnimeListNoParameter(t *testing.T) {
-	getReq(t, "/api/v1/anime/list", 200)
 }
 
 func TestAnimeListBigIntParameter(t *testing.T) {
