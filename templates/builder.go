@@ -17,6 +17,7 @@ var Data = models.TemplateBlocks{
 			Data: map[string]string{
 				"head": helpers.FileToString("./templates/email/register/en.head.txt"),
 				"body": helpers.FileToString("./templates/email/register/en.body.html"),
+				"txt":  helpers.FileToString("./templates/email/register/en.body.txt"),
 			},
 		},
 	},
