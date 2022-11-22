@@ -43,7 +43,7 @@ func ConnectDatabase(databaseFile string) {
 		return
 	}
 	// migrate EmailVerificationKey
-	err = database.AutoMigrate(&models.EmailVerificationKey{})
+	err = database.AutoMigrate(&models.EmailVerificationCode{})
 	if err != nil {
 		log.Panic("Failed to migrate EmailVerificationKey{}")
 		return
