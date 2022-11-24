@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+
+## BUILD
+FROM golang:1.18 AS build
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+
+RUN go mod download
+
+COPY Init.go ./
+COPY .env.docker ./.env
+COPY templates/ ./templates
+COPY setups/ ./setups
+COPY models/ ./models
+COPY helpers/ ./helpers
+COPY controllers/ ./controllers
+
+RUN go build -o /api-application
+
+
+## Deploy
+FROM ubuntu:20.04
+
+RUN apt-get update && apt-get install -y sqlite3
+
+WORKDIR /app
+COPY --from=build /api-application ./api-application
+COPY --from=build /app/.env ./
+COPY --from=build /app/templates ./
+
+EXPOSE 8080
+
+ENTRYPOINT ["/app/api-application"]
