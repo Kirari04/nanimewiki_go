@@ -2,7 +2,8 @@ package main
 
 import (
 	"ch/kirari/animeApi/controllers"
-	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/setups"
+	"log"
 	"os"
 	"strconv"
 
@@ -15,13 +16,16 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		panic("Error loading .env file")
+		log.Panic("Error loading .env file")
 	}
 
-	models.ConnectDatabase(os.Getenv("database"))
-	var doSeed, _ = strconv.ParseBool(os.Getenv("database_seed"))
+	setups.ConnectDatabase(os.Getenv("database"))
+	doSeed, err := strconv.ParseBool(os.Getenv("database_seed"))
+	if err != nil {
+		log.Panic("Failed to parse database_seed")
+	}
 	if doSeed {
-		models.SeedDatabase()
+		setups.SeedDatabase()
 	}
 
 	gin.SetMode(os.Getenv("gin_mode"))
@@ -45,7 +49,7 @@ func main() {
 
 			user := v1.Group("/user")
 			{
-				user.GET("/register", controllers.UserRegister)
+				user.POST("/register", controllers.UserRegister)
 			}
 		}
 	}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellcome {{username}} to {{service_name}}</title>
+</head>
+<body style="font-family: 'Roboto', sans-serif;padding: 2rem;">
+    <h1>Wellcome {{username}} to {{service_name}},</h1>
+    <p>to activate your accound please enter the below shown code into the website.</p>
+    <center>
+        <code style="background-color: rgb(42, 42, 42);
+        margin: 1rem 0;
+        box-shadow: 5px 5px 10px rgb(24, 24, 24);
+        color: white;
+        font-size: 30pt;
+        letter-spacing: 1rem;
+        padding: 1rem 0 1rem 1rem;
+        text-align: center;
+        border-radius: 1rem;">{{code}}</code>
+    </center>
+    <p>This code expires in {{expiThis code expires in {{expires}}res}}</p>
+    <p style="color: red;">Make sure to not share this code with anyone!</p>
+    <p style="color: red;">Make sure to enter this code only on {{service_domain}}</p>
+    <p>Best Regards</p>
+    <p>The {{service_name}} Team</p>
+</body>
+</html> 

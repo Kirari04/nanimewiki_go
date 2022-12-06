@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ch/kirari/animeApi/models"
+	"ch/kirari/animeApi/setups"
 	"net/http"
 	"os"
 	"strconv"
@@ -9,20 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MapRequest struct {
+type MapRequest_ListAnime struct {
 	Index uint `uri:"index"`
 }
 
 func ListAnime(c *gin.Context) {
 	// VALIDATOR
-	var req MapRequest
+	var req MapRequest_ListAnime
 	if c.ShouldBindUri(&req) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": 0,
-			"error":   "Bad Request",
-			"data":    nil,
-			"len":     nil,
-		})
+		CustomError_response(c, http.StatusBadRequest, "Bad Request")
 		return
 	}
 
@@ -31,14 +27,9 @@ func ListAnime(c *gin.Context) {
 	offset := int(req.Index) * limit
 
 	var animes []models.Anime
-	models.DB.Limit(limit).Offset(offset).Find(&animes)
+	setups.DB.Limit(limit).Offset(offset).Find(&animes)
 	var itemLen int64
-	models.DB.Model(&models.Anime{}).Count(&itemLen)
+	setups.DB.Model(&models.Anime{}).Count(&itemLen)
 
-	c.JSON(http.StatusOK, gin.H{
-		"success": 1,
-		"error":   "",
-		"data":    animes,
-		"len":     itemLen,
-	})
+	OK_response(c, animes, itemLen)
 }

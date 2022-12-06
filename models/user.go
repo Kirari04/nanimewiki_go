@@ -1,11 +1,20 @@
 package models
 
+import "time"
+
 type User struct {
-	ID       uint   `gorm:"primary_key;autoIncrement;not null;unique"`
-	Email    string `gorm:"not null;uniqueIndex"`
-	Username string `gorm:"not null;index"`
-	Password string `gorm:""`
-	Avatar   string `gorm:""`
-	Updated  int64  `gorm:"autoUpdateTime"` // Use unix milli seconds as updating time
-	Created  int64  `gorm:"autoCreateTime"`
+	DBModel
+	Email         string `gorm:"not null;uniqueIndex"`
+	EmailVerified bool   `gorm:"default:false"`
+	Username      string `gorm:"not null;index"`
+	Password      string `gorm:""`
+	Avatar        string `gorm:""`
+}
+
+type EmailVerificationCode struct {
+	DBModel
+	UserID uint      `gorm:"not null"`
+	User   User      `gorm:""`
+	Code   string    `gorm:""`
+	Expire time.Time `gorm:"not null"`
 }
