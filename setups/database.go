@@ -92,7 +92,7 @@ func SeedDatabase() {
 
 	seedStart := time.Now()
 	var deleteCurrent, _ = strconv.ParseBool(os.Getenv("database_seed_overwrite"))
-	if deleteCurrent == true {
+	if deleteCurrent {
 		DB.Where("1 = 1").Delete(&models.Anime{})
 	}
 
