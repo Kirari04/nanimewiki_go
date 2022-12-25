@@ -2,3 +2,6 @@ database.db
 seed.json
 .env
 .env.docker
+zinkdata
+docker_build.bash
+docker_run.bash
