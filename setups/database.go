@@ -2,12 +2,11 @@ package setups
 
 import (
 	"ch/kirari/animeApi/models"
-	"io/ioutil"
 	"log"
 	"strconv"
 	"time"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"encoding/json"
@@ -25,7 +24,8 @@ type offline_database struct {
 }
 
 func ConnectDatabase(databaseFile string) {
-	database, err := gorm.Open(sqlite.Open(databaseFile), &gorm.Config{})
+	dsn := os.Getenv("database_dsn")
+	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Panic("Failed to connect to database!")
 	}
@@ -68,7 +68,7 @@ func SeedDatabase() {
 	}
 	defer jsonFile.Close()
 
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		log.Println("Failed to read all from [database_seed_file]")
 		log.Printf("err: %v\n", err)
