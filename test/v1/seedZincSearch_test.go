@@ -8,10 +8,12 @@ import (
 
 // TESTS
 
-func TestSeedZincSearch_AddEntry(t *testing.T) {
-	AssertEqualBool(t, true, setups.SeedZincSearch_AddEntry(models.Anime{
-		Title:  "Test Entry",
-		Type:   "TV",
-		Status: "FINISHED",
+func TestSeedZincSearch_AddEntrys(t *testing.T) {
+	AssertEqualBool(t, true, setups.ZincSearch_AddEntrys([]models.Anime{
+		{
+			Title:  "Test Entry",
+			Type:   "TV",
+			Status: "FINISHED",
+		},
 	}))
 }

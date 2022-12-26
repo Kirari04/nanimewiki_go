@@ -32,6 +32,16 @@ func main() {
 		setups.SeedDatabase()
 	}
 
+	// seed the search if needed
+	doZincSeed, err := strconv.ParseBool(os.Getenv("zinc_seed"))
+	if err != nil {
+		log.Panic("Failed to parse zinc_seed")
+	}
+	if doZincSeed {
+		setups.SeedSearch()
+	}
+	// ZincSearch_AddEntrys
+
 	// configure gin
 	gin.SetMode(os.Getenv("gin_mode"))
 	router := gin.New()
