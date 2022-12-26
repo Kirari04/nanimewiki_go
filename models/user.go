@@ -4,9 +4,9 @@ import "time"
 
 type User struct {
 	DBModel
-	Email         string `gorm:"not null;uniqueIndex"`
+	Email         string `gorm:"not null;uniqueIndex;size:256"`
 	EmailVerified bool   `gorm:"default:false"`
-	Username      string `gorm:"not null;index"`
+	Username      string `gorm:"not null;index;size:256"`
 	Password      string `gorm:""`
 	Avatar        string `gorm:""`
 }
