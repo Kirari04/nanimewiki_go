@@ -1,3 +1,11 @@
+## Console
+### Seed Database or Search engine
+```bash
+/application -console=seed -seed=database # this will seed your database
+/application -console=seed -seed=search # this will seed your search engine
+/application -console=seed -seed=all # this will seed both
+```
+
 ## Deploy Docker Container
 ```bash
 # Build container
