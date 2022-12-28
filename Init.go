@@ -1,11 +1,12 @@
 package main
 
 import (
+	"ch/kirari/animeApi/console"
 	"ch/kirari/animeApi/controllers"
 	"ch/kirari/animeApi/setups"
+	"flag"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -23,24 +24,14 @@ func main() {
 	// setup the database connection
 	setups.ConnectDatabase(os.Getenv("database"))
 
-	// seed the database if needed
-	doSeed, err := strconv.ParseBool(os.Getenv("database_seed"))
-	if err != nil {
-		log.Panic("Failed to parse database_seed")
+	// run console mode if required
+	doConsole := flag.String("console", "false", "console")
+	doSeed := flag.String("seed", "", "seed")
+	flag.Parse()
+	if *doConsole != "false" {
+		console.Console(*doConsole, *doSeed)
+		return
 	}
-	if doSeed {
-		setups.SeedDatabase()
-	}
-
-	// seed the search if needed
-	doZincSeed, err := strconv.ParseBool(os.Getenv("zinc_seed"))
-	if err != nil {
-		log.Panic("Failed to parse zinc_seed")
-	}
-	if doZincSeed {
-		setups.SeedSearch()
-	}
-	// ZincSearch_AddEntrys
 
 	// configure gin
 	gin.SetMode(os.Getenv("gin_mode"))
