@@ -4,6 +4,7 @@ import (
 	"ch/kirari/animeApi/models"
 	"io"
 	"log"
+	"math"
 	"strings"
 
 	b64 "encoding/base64"
@@ -13,17 +14,18 @@ import (
 )
 
 func SeedSearch() {
-	var limit int64 = 200
+	var limit int64 = 1000
 	var index int64 = 0
 	var itemLen int64
 	DB.Model(&models.Anime{}).Count(&itemLen)
 
 	log.Printf("Found %v animes to seed\n", itemLen)
-	log.Println("Start seeding database")
+	log.Println("Start seeding search egnine")
 	for i := int64(0); i < itemLen; i = i + limit {
 		var animes []models.Anime
 		DB.Limit(int(limit)).Offset(int(index * limit)).Find(&animes)
 		ZincSearch_AddEntrys(animes)
+		log.Printf("Added to search: %v %%\n", math.Round(float64(100/float64(itemLen)*float64(i+1))))
 		index++
 	}
 	log.Println("All animes had been added to the search")
@@ -73,7 +75,6 @@ func ZincSearch_AddEntrys(animes []models.Anime) bool {
 		log.Fatal(err)
 		return false
 	}
-	log.Println(string(body))
 
 	var data ExpectedResponse
 	err = json.Unmarshal(body, &data)
