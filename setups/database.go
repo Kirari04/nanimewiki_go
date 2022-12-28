@@ -3,11 +3,14 @@ package setups
 import (
 	"ch/kirari/animeApi/models"
 	"log"
+	"math"
 	"strconv"
+	"sync"
 	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"encoding/json"
 	"io"
@@ -25,7 +28,9 @@ type offline_database struct {
 
 func ConnectDatabase(databaseFile string) {
 	dsn := os.Getenv("database_dsn")
-	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		log.Panic("Failed to connect to database!")
 	}
@@ -88,19 +93,42 @@ func SeedDatabase() {
 	log.Println("Seed has been downloaded")
 	log.Println("animes: " + strconv.Itoa(len(off_db_val.Data)))
 	log.Println("lastUpdate: " + off_db_val.LastUpdate)
-	log.Println("Start seeding database")
 
 	seedStart := time.Now()
+
+	// delete old data in db
 	var deleteCurrent, _ = strconv.ParseBool(os.Getenv("database_seed_overwrite"))
 	if deleteCurrent {
+		log.Println("Deleted old Anime Data")
 		DB.Where("1 = 1").Delete(&models.Anime{})
 	}
 
-	for i := 0; i < len(off_db_val.Data); i++ {
-		DB.Create(&off_db_val.Data[i])
+	// seed new data
+	log.Println("Start seeding database")
+	datas := chunkSlice(off_db_val.Data, 500)
+	sliceLength := len(datas)
+	var done int = 0
+	var wg sync.WaitGroup
+	wg.Add(sliceLength)
+	for i := 0; i < sliceLength; i++ {
+		go func(i int, done *int, len int) {
+			defer wg.Done()
+			DB.Create(&datas[i])
+			*done++
+			log.Printf("Done: %v %%", math.Round(float64(100/float64(sliceLength)*float64(*done))))
+		}(i, &done, sliceLength)
 	}
+	wg.Wait()
 	seedElapsed := time.Since(seedStart)
 	log.Printf("Time to Seed: %s\n", seedElapsed)
+}
+
+func chunkSlice(items []models.Anime, chunkSize int32) (chunks [][]models.Anime) {
+	for chunkSize < int32(len(items)) {
+		chunks = append(chunks, items[0:chunkSize])
+		items = items[chunkSize:]
+	}
+	return append(chunks, items)
 }
 
 func downloadFile(filepath string, url string) bool {
